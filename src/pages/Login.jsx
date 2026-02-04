@@ -79,7 +79,7 @@ const googleLogin = useGoogleLogin({
      }
      else{
       setToasing(true);
-      handleToast("error", "Google login failed");
+      handleToast("error", res.data?.message || "Google login failed");
      }
     } catch (err) {
       setLoading(false);
