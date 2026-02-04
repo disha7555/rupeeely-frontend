@@ -84,7 +84,11 @@ const googleLogin = useGoogleLogin({
     } catch (err) {
       setLoading(false);
       setToasing(true)
-      handleToast("error", "Google login failed");
+        handleToast(
+        "error",
+        err.response?.data?.message || "Google login failed"
+      );
+      //handleToast("error", "Google login failed");
     }
   },
   onError: () => {
