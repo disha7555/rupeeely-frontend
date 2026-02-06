@@ -149,21 +149,21 @@ return true;
         },1000);
         }
         else{
-         // setLoading(false);
+          setLoading(false);
           setToasing(true);
           handleToast("error",res.data.message ||  "Login failed");
         }
       })
       .catch((err)=>{
-       // setLoading(false);
+        setLoading(false);
         setToasing(true)
         handleToast("error",err.response.data.message ||  "Registration failed");
       })
-       .finally(() => {
-      setLoading(false); // ✅ ONLY here
-    });
+    //    .finally(() => {
+    //   setLoading(false); // ✅ ONLY here
+    // });
     }
-    setLoading(false);
+    //setLoading(false);
   }
   const [formData, setFormData] = React.useState({
     name: "",
@@ -180,12 +180,14 @@ return true;
   }
   return (
     <>
-       {loading && (   <div style={loaderWrapperStyle}>
+       {loading && (
+           <div style={loaderWrapperStyle}>
                 <div style={loaderStyle} />
                 <style>
                     {`@keyframes spin { to { transform: rotate(360deg); } }`}
                 </style>
-            </div>)}
+            </div>
+          )}
     <div
       className='page-background'
       id="mainContainer"
