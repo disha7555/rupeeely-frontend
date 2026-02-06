@@ -139,7 +139,7 @@ return true;
         withCredentials: true})
       .then((res)=>{
         if(res.data.success){
-          setLoading(false);
+          //setLoading(false);
           //console.log("res.data.accessToken",res.data.accessToken)
          localStorage.setItem("accesstoken", res.data.accessToken);
          setToasing(true);
@@ -149,16 +149,19 @@ return true;
         },1000);
         }
         else{
-          setLoading(false);
+         // setLoading(false);
           setToasing(true);
           handleToast("error",res.data.message ||  "Login failed");
         }
       })
       .catch((err)=>{
-        setLoading(false);
+       // setLoading(false);
         setToasing(true)
         handleToast("error",err.response.data.message ||  "Registration failed");
-      });
+      })
+       .finally(() => {
+      setLoading(false); // ✅ ONLY here
+    });
     }
     setLoading(false);
   }
