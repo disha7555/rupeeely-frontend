@@ -6,7 +6,7 @@ import helperConfig from './helperConfig.js';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CloseIcon from '@mui/icons-material/Close';
-
+import ToastMessages from './ToastMessages.jsx'
 import {
     Dialog,
     DialogActions,
@@ -19,8 +19,35 @@ const Navbar = () => {
     const url = helperConfig();
     const [open, setOpen] = useState(false);
     const [logoutOpen, setLogoutOpen] = useState(false);
-
+    const [loading, setLoading] = useState(false);
+    const [toasting, setToasing] = useState(false);
+    const [toastMsg, setToastMsg] = useState({ type: "", msg: "" });
     const navigate = useNavigate();
+    const loaderWrapperStyle = {
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(to bottom right, #f9fafb, #f3f4f6)',
+
+    };
+
+    const loaderStyle = {
+        width: '48px',
+        height: '48px',
+        borderRadius: '50%',
+        borderBottom: '3px solid #006F76',
+        animation: 'spin 1s linear infinite',
+    };
+    function handleToast(type, msg) {
+        setToasing(true);
+        setToastMsg({ type: type, msg: msg });
+        setTimeout(() => {
+            setToasing(false);
+        }, 1000);
+    }
+
+
     const LogoBlock = () => (
         <div className="logo-block">
             <div style={{ display: "flex", alignItems: "center" }}>
@@ -37,20 +64,31 @@ const Navbar = () => {
 
     const handleLogout = async () => {
         try {
-            await axios.post(
+            setLoading(true);
+            const res = await axios.post(
                 url + "/api/auth/logout",
                 {},
                 { withCredentials: true }
             );
 
-
+            setToasing(true);
+            handleToast("success", "Logged out successfully");
             setOpen(false); // close menu
-            navigate("/login"); // redirect
+            setTimeout(() => {
+                navigate("/login"); // redirect
+            },1000);
         } catch (err) {
             console.error("Logout failed", err);
+            setLoading(false);
+            setToasing(true)
+            handleToast(
+                "error",
+                err.response?.data?.message || "logout failed"
+            );
         }
     };
-    return (
+    return (<>
+        
         <nav className="navbar">
             <LogoBlock />
 
@@ -83,16 +121,23 @@ const Navbar = () => {
                 >
                     Logout
                 </Button>
-
+                 {toasting && (
+  <ToastMessages
+    type={toastMsg.type}
+    msg={toastMsg.msg}
+    onClose={() => setToasing(false)}
+  />
+)}
                 <Dialog open={logoutOpen} onClose={() => setLogoutOpen(false)} PaperProps={{
                     sx: {
                         minHeight: 210, // 👈 increase height
                         width: 360,     // optional, for better balance
                     },
                 }}>
+                    
                     <DialogTitle style={{ textAlign: "center", padding: "14px 22px" }} className="prinamry-bgcolor">Logout
-                         <CloseIcon onClick={() => setLogoutOpen(false)} sx={{ color: 'white', float: "right", cursor: "pointer" }} />
-                
+                        <CloseIcon onClick={() => setLogoutOpen(false)} sx={{ color: 'white', float: "right", cursor: "pointer" }} />
+
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText style={{ fontSize: "1rem", textAlign: "center", marginTop: "20px", color: "black" }}>
@@ -101,14 +146,15 @@ const Navbar = () => {
                     </DialogContent>
                     <DialogActions>
                         <Button className='cancel-button common-btn' variant="contained" onClick={() => setLogoutOpen(false)}>Cancel</Button>
-                        <Button className='custom-button common-btn' variant="contained" color="error" style={{backgroundColor:"#888"}} onClick={handleLogout}>
-                            Logout
+                        <Button className='custom-button common-btn' variant="contained" color="error" style={{ backgroundColor: "#888" }} onClick={handleLogout}  disabled={loading}>
+                             {loading ? "Logging out..." : "Logout"}
                         </Button>
                     </DialogActions>
                 </Dialog>
 
             </ul>
         </nav>
+    </>
     );
 };
 

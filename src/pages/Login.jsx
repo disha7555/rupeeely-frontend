@@ -157,7 +157,7 @@ return true;
       .catch((err)=>{
         setLoading(false);
         setToasing(true)
-        handleToast("error",err.response.data.message ||  "Registration failed");
+        handleToast("error",err.response.data.message ||  "Login failed");
       })
     //    .finally(() => {
     //   setLoading(false); // ✅ ONLY here
@@ -348,7 +348,7 @@ return true;
            
 
             <Button variant="contained" className="custom-button" style={{ marginTop: "20px", width: "100%", maxWidth: "360px" }}
-             onClick={handleSubmit}
+             onClick={handleSubmit} disabled={loading}
             >
              Login
             </Button>
